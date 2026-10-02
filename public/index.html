@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c0b1a">
+  <meta name="description" content="Private conversations. Simple rooms.">
+  <title>PrivyChat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <main id="auth" class="auth" hidden>
+    <!-- Landing -->
+    <section data-view="landing" class="landing">
+      <div class="landing-copy">
+        <h1>PrivyChat</h1>
+        <p class="tagline">Private conversations. Simple rooms.</p>
+        <p class="explain">Create a private room, invite members using a Room Code, and let every member use their own secure username and password.</p>
+        <div class="actions">
+          <button class="btn btn-primary" data-nav="create">Create Room</button>
+          <button class="btn btn-glass" data-nav="join">Join Room</button>
+          <button class="btn btn-ghost" data-nav="login">Login</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Create room -->
+    <section data-view="create" class="card" hidden>
+      <h2>Create Room</h2>
+      <form id="form-create" novalidate>
+        <label>Username<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24" required></label>
+        <label>Password<input name="password" type="password" autocomplete="new-password" maxlength="72" required></label>
+        <label>Confirm Password<input name="confirmPassword" type="password" autocomplete="new-password" maxlength="72" required></label>
+        <p class="form-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary block">Create Room</button>
+        <button type="button" class="btn btn-ghost block" data-nav="landing">Back</button>
+      </form>
+    </section>
+
+    <!-- Room created -->
+    <section data-view="created" class="card center" hidden>
+      <h2>Your Room Code</h2>
+      <div class="code big" id="new-code" aria-live="polite"></div>
+      <p class="hint">Share this code. Each person creates their own username and password.</p>
+      <button type="button" id="copy-new" class="btn btn-glass block">Copy Room Code</button>
+      <button type="button" id="enter-new" class="btn btn-primary block">Enter Chat</button>
+    </section>
+
+    <!-- Join -->
+    <section data-view="join" class="card" hidden>
+      <h2>Join Room</h2>
+      <form id="form-join" novalidate>
+        <label>Room Code<input name="roomCode" class="code-input" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="6" required></label>
+        <label>Username<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24" required></label>
+        <label>Password<input name="password" type="password" autocomplete="new-password" maxlength="72" required></label>
+        <label>Confirm Password<input name="confirmPassword" type="password" autocomplete="new-password" maxlength="72" required></label>
+        <p class="form-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary block">Join Room</button>
+        <button type="button" class="btn btn-ghost block" data-nav="landing">Back</button>
+      </form>
+    </section>
+
+    <!-- Login -->
+    <section data-view="login" class="card" hidden>
+      <h2>Login</h2>
+      <form id="form-login" novalidate>
+        <label>Room Code<input name="roomCode" class="code-input" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="6" required></label>
+        <label>Username<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" maxlength="128" required></label>
+        <p class="form-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary block">Login</button>
+        <button type="button" class="btn btn-ghost block" data-nav="landing">Back</button>
+      </form>
+    </section>
+  </main>
+
+  <div id="app" class="app" hidden>
+    <div class="scrim" id="scrim"></div>
+    <aside class="sidebar" id="sidebar" aria-label="Room and members">
+      <div class="side-head"><span class="brand">PrivyChat</span></div>
+      <div class="room-box">
+        <span class="muted">Room code</span>
+        <div class="room-row"><strong id="room-code" class="mono"></strong><button type="button" id="copy-room" class="btn btn-glass small">Copy</button></div>
+      </div>
+      <div class="members-head">Members <span id="member-count" class="pill"></span><span id="online-count" class="online-count">0 online</span></div>
+      <ul id="member-list" class="member-list"></ul>
+      <div class="me">
+        <div id="me-avatar" class="avatar"></div>
+        <div class="me-text"><span class="muted">Signed in as</span><strong id="me-name"></strong></div>
+        <button type="button" id="logout" class="btn btn-ghost small">Logout</button>
+      </div>
+    </aside>
+
+    <section class="chat">
+      <header class="chat-head">
+        <button type="button" id="burger" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar"><span></span><span></span><span></span></button>
+        <div class="chat-title">
+          <strong>Room <span id="head-code" class="mono"></span></strong>
+          <span id="conn" class="conn" data-state="connecting"><i></i><em>Connecting</em></span>
+        </div>
+      </header>
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <form id="composer" class="composer">
+        <textarea id="input" rows="1" maxlength="2000" placeholder="Write a message" aria-label="Message"></textarea>
+        <button type="submit" id="send" class="btn btn-primary">Send</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
